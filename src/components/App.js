@@ -4,15 +4,15 @@ import { authService } from "fbase";
 import { onAuthStateChanged } from "firebase/auth";
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [init, setInit] = useState(false);
+  const [userObj, setUserObj] = useState(null);
 
   useEffect(() => {
     onAuthStateChanged(authService, (user) => {
       if (user) {
-        setIsLoggedIn(true);
+        setUserObj(user);
       } else {
-        setIsLoggedIn(false);
+        setUserObj(null);
       }
       setInit(true);
     });
@@ -20,7 +20,11 @@ function App() {
 
   return (
     <>
-      {init ? <AppRoute isLoggedIn={isLoggedIn} /> : "Initializing..."}
+      {init ? (
+        <AppRoute isLoggedIn={Boolean(userObj)} userObj={userObj} />
+      ) : (
+        "Initializing..."
+      )}
       <footer>&copy; {new Date().getFullYear()} Kwitter</footer>
     </>
   );
