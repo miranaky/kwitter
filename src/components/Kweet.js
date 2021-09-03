@@ -1,28 +1,35 @@
 import React, { useState } from "react";
 import { deleteDoc, doc, updateDoc } from "@firebase/firestore";
-import { dbService } from "fbase";
+import { deleteObject, ref } from "@firebase/storage";
+import { dbService, storageService } from "fbase";
 
 const Kweet = ({ kweetObj, isOwn }) => {
   const [editting, setEditting] = useState(false);
   const [newTweet, setNewTweet] = useState(kweetObj.text);
+
   const onClickDelete = async () => {
     const ok = window.confirm("Are you sure you want to delete this kweet?");
     if (ok) {
       await deleteDoc(doc(dbService, "kweet", kweetObj.id));
+      await deleteObject(ref(storageService, kweetObj.attachmentUrl));
     }
   };
+
   const toggleEditting = () => setEditting((prev) => !prev);
+
   const onChange = (event) => {
     const {
       target: { value },
     } = event;
     setNewTweet(value);
   };
+
   const onSubmit = async (event) => {
     event.preventDefault();
     await updateDoc(doc(dbService, "kweet", kweetObj.id), { text: newTweet });
     setEditting(false);
   };
+
   return (
     <div>
       {editting ? (
@@ -42,6 +49,9 @@ const Kweet = ({ kweetObj, isOwn }) => {
       ) : (
         <>
           <h4>{kweetObj.text}</h4>
+          {kweetObj.attachmentUrl && (
+            <img src={kweetObj.attachmentUrl} width="50px" height="50px" />
+          )}
           {isOwn && (
             <>
               <button onClick={onClickDelete}>Delete</button>
