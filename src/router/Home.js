@@ -1,6 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { dbService, storageService } from "fbase";
-import { addDoc, collection, onSnapshot, query } from "@firebase/firestore";
+import {
+  addDoc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "@firebase/firestore";
 import { uploadString, ref, getDownloadURL } from "@firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import Kweet from "components/Kweet";
@@ -27,7 +33,6 @@ const Home = ({ userObj }) => {
       );
       await uploadString(storageRef, attachment, "data_url");
       attachmentUrl = await getDownloadURL(storageRef);
-      console.log(attachmentUrl);
     }
     //create kweet
     const kweetObj = {
@@ -66,7 +71,11 @@ const Home = ({ userObj }) => {
   };
 
   useEffect(() => {
-    onSnapshot(query(collection(dbService, "kweet")), (snapshot) => {
+    const orderedKweetQuery = query(
+      collection(dbService, "kweet"),
+      orderBy("createdAt", "desc")
+    );
+    onSnapshot(orderedKweetQuery, (snapshot) => {
       const kweetArray = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -95,7 +104,7 @@ const Home = ({ userObj }) => {
         <input type="submit" value="kweet" />
         {attachment && (
           <div>
-            <img src={attachment} height="50px" width="50px" />
+            <img src={attachment} height="50px" width="50px" alt="" />
             <button onClick={onClickClear}>clear</button>
           </div>
         )}

@@ -11,7 +11,9 @@ const Kweet = ({ kweetObj, isOwn }) => {
     const ok = window.confirm("Are you sure you want to delete this kweet?");
     if (ok) {
       await deleteDoc(doc(dbService, "kweet", kweetObj.id));
-      await deleteObject(ref(storageService, kweetObj.attachmentUrl));
+      if (kweetObj.attachmentUrl !== "") {
+        await deleteObject(ref(storageService, kweetObj.attachmentUrl));
+      }
     }
   };
 
@@ -50,7 +52,12 @@ const Kweet = ({ kweetObj, isOwn }) => {
         <>
           <h4>{kweetObj.text}</h4>
           {kweetObj.attachmentUrl && (
-            <img src={kweetObj.attachmentUrl} width="50px" height="50px" />
+            <img
+              src={kweetObj.attachmentUrl}
+              width="50px"
+              height="50px"
+              alt={kweetObj.id}
+            />
           )}
           {isOwn && (
             <>

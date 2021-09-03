@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
 } from "firebase/auth";
 import React, { useState } from "react";
 
@@ -34,6 +35,9 @@ const Auth = () => {
           email,
           password
         );
+        const nameParts = email.split("@");
+        const displayName = nameParts.length == 2 ? nameParts[0] : null;
+        await updateProfile(data.user, { displayName });
       } else {
         data = await signInWithEmailAndPassword(authService, email, password);
       }
