@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { deleteDoc, doc, updateDoc } from "@firebase/firestore";
 import { deleteObject, ref } from "@firebase/storage";
 import { dbService, storageService } from "fbase";
+import { faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Kweet = ({ kweetObj, isOwn }) => {
   const [editting, setEditting] = useState(false);
@@ -33,37 +35,39 @@ const Kweet = ({ kweetObj, isOwn }) => {
   };
 
   return (
-    <div>
+    <div className="nweet">
       {editting ? (
         <>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={onSubmit} className="container nweetEdit">
             <input
               type="text"
               placeholder="Edit your Kweet."
               onChange={onChange}
               value={newTweet}
               required
+              autoFocus
+              className="formInput"
             />
-            <input type="submit" value="Update Kweet" />
+            <input type="submit" value="Update Kweet" className="formBtn" />
           </form>
-          <button onClick={toggleEditting}>Cancel</button>
+          <button onClick={toggleEditting} className="formBtn cancelBtn">
+            Cancel
+          </button>
         </>
       ) : (
         <>
           <h4>{kweetObj.text}</h4>
-          {kweetObj.attachmentUrl && (
-            <img
-              src={kweetObj.attachmentUrl}
-              width="50px"
-              height="50px"
-              alt={kweetObj.id}
-            />
-          )}
+          {kweetObj.attachmentUrl && <img src={kweetObj.attachmentUrl} />}
           {isOwn && (
-            <>
-              <button onClick={onClickDelete}>Delete</button>
-              <button onClick={toggleEditting}>Edit</button>
-            </>
+            <div className="nweet__actions">
+              <span onClick={onClickDelete}>
+                <FontAwesomeIcon icon={faTrash} />
+              </span>
+              <span onClick={toggleEditting}>
+                {" "}
+                <FontAwesomeIcon icon={faPencilAlt} />
+              </span>
+            </div>
           )}
         </>
       )}

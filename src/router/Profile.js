@@ -5,16 +5,16 @@ import {
   onSnapshot,
   where,
 } from "@firebase/firestore";
-import { signOut, updateProfile } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import React, { useEffect, useState } from "react";
 import { authService, dbService } from "fbase";
 import { useHistory } from "react-router-dom";
 import Kweet from "components/Kweet";
+import EditProfile from "components/EditProfile";
 
 const Profile = ({ userObj, refreshUser }) => {
   const history = useHistory();
   const [kweets, setKweets] = useState([]);
-  const [newDisplayName, setNewDisplayName] = useState(userObj.displayName);
 
   const onSignOut = async () => {
     await signOut(authService);
@@ -35,24 +35,6 @@ const Profile = ({ userObj, refreshUser }) => {
       }));
       setKweets(kweetArray);
     });
-    // const res = await getDocs(myQuery);
-  };
-
-  const onChangeName = (event) => {
-    const {
-      target: { value },
-    } = event;
-    setNewDisplayName(value);
-  };
-
-  const onSubmit = async (event) => {
-    event.preventDefault();
-    if (userObj.displayName !== newDisplayName) {
-      await userObj.updateProfile({
-        displayName: newDisplayName,
-      });
-      refreshUser();
-    }
   };
 
   useEffect(() => {
@@ -60,19 +42,21 @@ const Profile = ({ userObj, refreshUser }) => {
   }, []);
 
   return (
-    <>
-      <form onSubmit={onSubmit}>
-        <input
-          type="text"
-          placeholder="Display Name"
-          value={newDisplayName}
-          onChange={onChangeName}
-        />
-        <input type="submit" value="Edit UserName" />
-      </form>
-      <button onClick={onSignOut}>Sign Out</button>
-      <div>
-        <h3>My Kweet!</h3>
+    <div className="container">
+      <EditProfile userObj={userObj} refreshUser={refreshUser} />
+      <span className="formBtn cancelBtn logOut" onClick={onSignOut}>
+        Sign Out
+      </span>
+      <div style={{ marginTop: 30 }}>
+        <h3
+          style={{
+            margin: 20,
+            fontSize: 20,
+            justifyContent: "center",
+          }}
+        >
+          My Kweets!
+        </h3>
         {kweets &&
           kweets.map((kweet) => (
             <Kweet
@@ -82,7 +66,7 @@ const Profile = ({ userObj, refreshUser }) => {
             />
           ))}
       </div>
-    </>
+    </div>
   );
 };
 

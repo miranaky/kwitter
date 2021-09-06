@@ -20,7 +20,7 @@ function App() {
     onAuthStateChanged(authService, (user) => {
       if (user && user.displayName == null) {
         const nameParts = user.email.split("@");
-        const name = nameParts.length == 2 ? nameParts[0] : null;
+        const name = nameParts.length === 2 ? nameParts[0] : null;
         updateProfile(user, { displayName: name });
       }
       if (user) {
